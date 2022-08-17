@@ -4,10 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "jest --passWithNoTest",
-    "test:watch": "npm run test -- --watch --o ",
-    "test:staged": "npm run test -- --o ",
-    "test:ci": "npm run test -- --coverage"
+    "test": "jest --passWithNoTests --no-cache --runInBand",
+    "test:watch": "npm run test -- --watch",
+    "test:staged": "npm run test -- -o",
+    "test:ci": "npm run test -- --coverage",
+    "prepare": "husky install"
   },
   "dependencies": {
     "git-commit-msg-linter": "^4.1.3"
