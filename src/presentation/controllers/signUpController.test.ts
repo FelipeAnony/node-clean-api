@@ -1,8 +1,11 @@
 class SignUpController {
   handle(httpRequest: any): any {
-    return {
-      statusCode: 400,
-    };
+    if (!httpRequest.body.name) {
+      return {
+        statusCode: 400,
+        body: new Error('Missing param: Name'),
+      };
+    }
   }
 }
 
@@ -15,7 +18,7 @@ describe('SignUp controller', () => {
     const sut = makeSut();
     const httpRequest = {
       body: {
-        name: 'any_name',
+        name: '',
         email: 'any@email.com',
         password: 'any_password',
         passwordConfirmation: 'any_password',
@@ -23,5 +26,6 @@ describe('SignUp controller', () => {
     };
     const httpResponse = sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new Error('Missing param: Name'));
   });
 });
