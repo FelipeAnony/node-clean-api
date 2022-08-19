@@ -132,7 +132,7 @@ describe('SignUp controller', () => {
     const makeSut = () => {
       class EmailValidatorStub {
         isValid(email: string) {
-          throw new ServerError();
+          throw new Error('any_error');
         }
       }
 
