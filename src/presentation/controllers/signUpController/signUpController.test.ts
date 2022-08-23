@@ -4,12 +4,14 @@ import {
   InvalidParamError,
   ServerError,
 } from '../../errors';
-import { EmailValidator } from '../../protocols/emailValidator';
+
 import {
   AddAccount,
   AddAccountModel,
 } from '../../../domain/usecases/addAccount';
+
 import { AccountModel } from '../../../domain/models/accountModel';
+import { EmailValidator } from './signUpProtocols';
 
 interface SutTypes {
   sut: SignUpController;
@@ -197,7 +199,7 @@ describe('SignUp controller', () => {
     expect(response.body).toEqual(new ServerError());
   });
 
-  it('Should call addAccout with correct params', () => {
+  it('Should call AddAccout with correct params', () => {
     const { sut, addAccountStub } = makeSut();
     const addSpy = jest.spyOn(addAccountStub, 'add');
     const httpRequest = {
@@ -215,5 +217,28 @@ describe('SignUp controller', () => {
       email: 'any@email.com',
       password: 'any_password',
     });
+  });
+
+  it('Should return 500 if AddAccount throws an error', () => {
+    const { sut, addAccountStub } = makeSut();
+
+    const AddSpy = jest
+      .spyOn(addAccountStub, 'add')
+      .mockImplementationOnce(() => {
+        throw new Error();
+      });
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any@email.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    };
+
+    const response = sut.handle(httpRequest);
+    expect(response.statusCode).toBe(500);
+    expect(response.body).toEqual(new ServerError());
   });
 });
