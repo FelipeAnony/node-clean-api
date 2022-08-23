@@ -5,12 +5,9 @@ import {
   ServerError,
 } from '../../errors';
 
-import {
-  AddAccount,
-  AddAccountModel,
-} from '../../../domain/usecases/addAccount';
+import { AddAccount, AddAccountModel } from '@/domain/usecases/addAccount';
 
-import { AccountModel } from '../../../domain/models/accountModel';
+import { AccountModel } from '@/domain/models/accountModel';
 import { EmailValidator } from './signUpProtocols';
 
 interface SutTypes {
