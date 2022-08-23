@@ -1,6 +1,6 @@
 import { AddAccount } from '@/domain/usecases/addAccount';
 import { InvalidParamError, MissingParamError } from '../../errors';
-import { badRequest, serverError } from '../../helpers/httpHelper';
+import { badRequest, okResponse, serverError } from '../../helpers/httpHelper';
 import { Controller, HttpRequest, HttpResponse } from '../../protocols';
 import { EmailValidator } from './signUpProtocols';
 
@@ -36,9 +36,9 @@ export class SignUpController implements Controller {
         return badRequest(new InvalidParamError('passwordConfirmation'));
       }
 
+      //if all data provided its valid, create and returns user
       const account = await this.addAccount.add({ name, email, password });
-
-      return { statusCode: 200, body: account };
+      return okResponse(account);
     } catch (error) {
       return serverError();
     }
