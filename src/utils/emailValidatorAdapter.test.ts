@@ -3,8 +3,14 @@ import validator from 'validator';
 
 jest.mock('validator');
 
-const mockedIsEmail = jest.spyOn(validator, 'isEmail');
-mockedIsEmail.mockReturnValue(true);
+const mockValidator = (value: boolean) => {
+  const mockedIsEmail = jest.spyOn(validator, 'isEmail');
+  mockedIsEmail.mockReturnValueOnce(value);
+};
+
+const makeSut = (): EmailValidatorAdapter => {
+  return new EmailValidatorAdapter();
+};
 
 export class EmailValidatorAdapter implements EmailValidator {
   isValid(email: string): boolean {
@@ -14,14 +20,17 @@ export class EmailValidatorAdapter implements EmailValidator {
 
 describe('EmailValidator Adapter', () => {
   it('Should return false if validator returns false', () => {
-    mockedIsEmail.mockReturnValueOnce(false);
-    const sut = new EmailValidatorAdapter();
+    mockValidator(false);
+    const sut = makeSut();
+
     const isValid = sut.isValid('invalid-email');
     expect(isValid).toBe(false);
   });
 
   it('Should return true if validator returns true', () => {
-    const sut = new EmailValidatorAdapter();
+    mockValidator(true);
+    const sut = makeSut();
+
     const isValid = sut.isValid('valid@email');
     expect(isValid).toBe(true);
   });
