@@ -4,8 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "jest --passWithNoTests --no-cache --runInBand",
+    "test": "jest --passWithNoTests --no-cache --runInBand --silent --noStackTrace",
     "test:watch": "npm run test -- --watch",
+    "test:verbose": "jest --passWithNoTests --verbose",
     "test:staged": "npm run test -- -o",
     "test:ci": "npm run test -- --coverage",
     "prepare": "husky install"
