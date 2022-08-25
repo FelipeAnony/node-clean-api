@@ -1,24 +1,11 @@
-import { EmailValidator } from '@/presentation/controllers/signUpController/signUpProtocols';
-import validator from 'validator';
+import { mockValidator } from '../mocks';
+import { EmailValidatorAdapter } from '.';
 
 jest.mock('validator');
-
-const mockValidator = (value = true) => {
-  const mockedIsEmail = jest.spyOn(validator, 'isEmail');
-  mockedIsEmail.mockReturnValueOnce(value);
-
-  return mockedIsEmail;
-};
 
 const makeSut = (): EmailValidatorAdapter => {
   return new EmailValidatorAdapter();
 };
-
-export class EmailValidatorAdapter implements EmailValidator {
-  isValid(email: string): boolean {
-    return validator.isEmail(email);
-  }
-}
 
 describe('EmailValidator Adapter', () => {
   it('Should return false if validator returns false', () => {
