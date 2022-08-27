@@ -1,26 +1,16 @@
-import { Encrypter } from '../../protocols';
+import { makeAddAccountRepositoryStub, makeEncrypterStub } from '@/data/mocks';
 import { DbAddAccount } from './dbAddAccount';
 
-const makeEncrypterStub = (): Encrypter => {
-  class EncrypterStub implements Encrypter {
-    async encrypt(value: string) {
-      return Promise.resolve('');
-    }
-  }
-
-  return new EncrypterStub();
-};
-
+const addAccountRepositoryStub = makeAddAccountRepositoryStub();
 const encrypterStub = makeEncrypterStub();
-
-const makeSut = (): DbAddAccount => {
-  return new DbAddAccount(encrypterStub);
-};
-
 const accountData = {
   email: 'valid@email.com',
   name: 'valid-name',
   password: 'valid_password',
+};
+
+const makeSut = (): DbAddAccount => {
+  return new DbAddAccount(encrypterStub, addAccountRepositoryStub);
 };
 
 describe('DbAddAccount usecase', () => {
@@ -43,5 +33,17 @@ describe('DbAddAccount usecase', () => {
 
     const promise = sut.add(accountData);
     await expect(promise).rejects.toThrow();
+  });
+
+  it('Should call AddAccountRepository with correct values', async () => {
+    const sut = makeSut();
+    const addSpy = jest.spyOn(addAccountRepositoryStub, 'add');
+
+    await sut.add(accountData);
+
+    expect(addSpy).toBeCalledWith({
+      ...accountData,
+      password: 'encrypted_password',
+    });
   });
 });
