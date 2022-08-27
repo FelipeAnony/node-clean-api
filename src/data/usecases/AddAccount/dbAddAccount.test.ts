@@ -59,4 +59,12 @@ describe('DbAddAccount usecase', () => {
     const promise = sut.add(accountData);
     await expect(promise).rejects.toThrow();
   });
+
+  it('Should return an account on success', async () => {
+    const sut = makeSut();
+    const addParams = { ...accountData, password: 'encrypted_password' };
+    const response = await sut.add(addParams);
+
+    expect(response).toEqual({ ...addParams, id: '' });
+  });
 });
