@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --passWithNoTests --runInBand",
+    "test:watch": "npm run test -- --watch -o" 
   },
   "keywords": [],
   "author": "",
