@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --passWithNoTests --runInBand",
-    "test:watch": "npm run test -- --watch -o" 
+    "test": "jest --passWithNoTests --no-cache --runInBand --silent --noStackTrace",
+    "test:watch": "npm run test -- --watch -o",
+    "test:verbose": "jest --passWithNoTests --verbose",
+    "test:ci": "npm run test -- --coverage",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",

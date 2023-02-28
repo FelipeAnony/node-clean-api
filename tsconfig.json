@@ -10,5 +10,8 @@
     "allowJs": true,
     "baseUrl": "./src",
     "removeComments": true,
+    "paths": {
+      "@/*": ["*"]
+    }
   }
 }
