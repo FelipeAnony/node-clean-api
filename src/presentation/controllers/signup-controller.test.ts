@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { MissingParamError } from '@/presentation/errors';
 
 import { SignUpController } from './signup-controller';
 
@@ -18,7 +19,7 @@ describe('SignUp controller', () => {
         const response = sut.handle(httpRequest);
 
         expect(response.statusCode).toBe(400);
-        expect(response.body).toEqual(new Error('Missing param: name'));
+        expect(response.body).toEqual(new MissingParamError('name'));
     });
 
     it('Should return 400 if theres no email provided', () => {
@@ -36,6 +37,6 @@ describe('SignUp controller', () => {
         const response = sut.handle(httpRequest);
 
         expect(response.statusCode).toBe(400);
-        expect(response.body).toEqual(new Error('Missing param: email'));
+        expect(response.body).toEqual(new MissingParamError('email'));
     });
 });
