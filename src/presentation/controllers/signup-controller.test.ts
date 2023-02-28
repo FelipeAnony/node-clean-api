@@ -39,4 +39,40 @@ describe('SignUp controller', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body).toEqual(new MissingParamError('email'));
     });
+
+    it('Should return 400 if theres no password provided', () => {
+        const sut = new SignUpController();
+        const password = faker.internet.password(32);
+
+        const httpRequest = {
+            body: {
+                name: faker.name.firstName(),
+                email: faker.internet.email(),
+                passwordConfirmation: password,
+            },
+        };
+
+        const response = sut.handle(httpRequest);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toEqual(new MissingParamError('password'));
+    });
+
+    it('Should return 400 if theres no password confirmation provided', () => {
+        const sut = new SignUpController();
+        const password = faker.internet.password(32);
+
+        const httpRequest = {
+            body: {
+                name: faker.name.firstName(),
+                email: faker.internet.email(),
+                password,
+            },
+        };
+
+        const response = sut.handle(httpRequest);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toEqual(new MissingParamError('passwordConfirmation'));
+    });
 });
