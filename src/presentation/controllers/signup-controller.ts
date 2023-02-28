@@ -4,8 +4,11 @@ import { badRequest } from '@/presentation/helpers';
 
 export class SignUpController {
     handle({ body }: HttpRequest): HttpResponse {
-        if (!body.name) return badRequest(new MissingParamError('name'));
-        if (!body.email) return badRequest(new MissingParamError('email'));
+        const requiredParams = ['name', 'email'];
+
+        for (const field of requiredParams) {
+            if (!body[field]) return badRequest(new MissingParamError(field));
+        }
 
         return {
             statusCode: 200,
