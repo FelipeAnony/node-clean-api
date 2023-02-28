@@ -1,8 +1,8 @@
 import { MissingParamError } from '@/presentation/errors';
-import { HttpRequest, HttpResponse } from '@/presentation/protocols';
+import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols';
 import { badRequest } from '@/presentation/helpers';
 
-export class SignUpController {
+export class SignUpController implements Controller {
     handle({ body }: HttpRequest): HttpResponse {
         const requiredParams = ['name', 'email', 'password', 'passwordConfirmation'];
 
