@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-import { MissingParamError, InvalidParamError } from '@/presentation/errors';
+import { MissingParamError, InvalidParamError, InternalServerError } from '@/presentation/errors';
 import { SignUpController } from './signup-controller';
 import { EmailValidator } from '../protocols';
 
@@ -129,5 +129,28 @@ describe('SignUp controller', () => {
         sut.handle(httpRequest);
 
         expect(isValidSpy).toBeCalledWith(email);
+    });
+
+    it('Should return 500 if emailValidator throws', () => {
+        const { sut, emailValidatorStub } = makeSignUpController();
+        const password = faker.internet.password(32);
+
+        const httpRequest = {
+            body: {
+                name: faker.name.firstName(),
+                email: 'any-email',
+                password,
+                passwordConfirmation: password,
+            },
+        };
+
+        jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
+            throw new Error();
+        });
+
+        const response = sut.handle(httpRequest);
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toEqual(new InternalServerError());
     });
 });
