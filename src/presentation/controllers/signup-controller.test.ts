@@ -3,9 +3,13 @@ import { MissingParamError } from '@/presentation/errors';
 
 import { SignUpController } from './signup-controller';
 
+const makeSignUpController = () => {
+    return new SignUpController();
+};
+
 describe('SignUp controller', () => {
     it('Should return 400 if theres no name provided', () => {
-        const sut = new SignUpController();
+        const sut = makeSignUpController();
         const password = faker.internet.password(32);
 
         const httpRequest = {
@@ -23,7 +27,7 @@ describe('SignUp controller', () => {
     });
 
     it('Should return 400 if theres no email provided', () => {
-        const sut = new SignUpController();
+        const sut = makeSignUpController();
         const password = faker.internet.password(32);
 
         const httpRequest = {
@@ -41,7 +45,7 @@ describe('SignUp controller', () => {
     });
 
     it('Should return 400 if theres no password provided', () => {
-        const sut = new SignUpController();
+        const sut = makeSignUpController();
         const password = faker.internet.password(32);
 
         const httpRequest = {
@@ -59,7 +63,7 @@ describe('SignUp controller', () => {
     });
 
     it('Should return 400 if theres no password confirmation provided', () => {
-        const sut = new SignUpController();
+        const sut = makeSignUpController();
         const password = faker.internet.password(32);
 
         const httpRequest = {
