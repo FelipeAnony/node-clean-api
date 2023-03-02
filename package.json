@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --passWithNoTests --no-cache --runInBand --silent --noStackTrace",
+    "test": "jest --passWithNoTests --no-cache --runInBand --noStackTrace",
     "test:watch": "npm run test -- --watch -o",
     "test:verbose": "jest --passWithNoTests --verbose",
     "test:ci": "npm run test -- --coverage",
