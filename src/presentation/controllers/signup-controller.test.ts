@@ -17,18 +17,27 @@ const makeSignUpController = () => {
     return { sut, emailValidatorStub };
 };
 
+const makeHttpRequestObject = ({
+    name = faker.name.firstName(),
+    email = faker.internet.email(),
+    password = faker.internet.password(32),
+}) => {
+    const passwordConfirmation = password;
+
+    return {
+        body: {
+            name,
+            email,
+            password,
+            passwordConfirmation,
+        },
+    };
+};
+
 describe('SignUp controller', () => {
     it('Should return 400 if theres no name provided', () => {
         const { sut } = makeSignUpController();
-        const password = faker.internet.password(32);
-
-        const httpRequest = {
-            body: {
-                email: faker.internet.email(),
-                password,
-                passwordConfirmation: password,
-            },
-        };
+        const httpRequest = makeHttpRequestObject({ name: '' });
 
         const response = sut.handle(httpRequest);
 
@@ -38,15 +47,7 @@ describe('SignUp controller', () => {
 
     it('Should return 400 if theres no email provided', () => {
         const { sut } = makeSignUpController();
-        const password = faker.internet.password(32);
-
-        const httpRequest = {
-            body: {
-                name: faker.name.firstName(),
-                password,
-                passwordConfirmation: password,
-            },
-        };
+        const httpRequest = makeHttpRequestObject({ email: '' });
 
         const response = sut.handle(httpRequest);
 
@@ -56,15 +57,7 @@ describe('SignUp controller', () => {
 
     it('Should return 400 if theres no password provided', () => {
         const { sut } = makeSignUpController();
-        const password = faker.internet.password(32);
-
-        const httpRequest = {
-            body: {
-                name: faker.name.firstName(),
-                email: faker.internet.email(),
-                passwordConfirmation: password,
-            },
-        };
+        const httpRequest = makeHttpRequestObject({ password: '' });
 
         const response = sut.handle(httpRequest);
 
@@ -74,16 +67,9 @@ describe('SignUp controller', () => {
 
     it('Should return 400 if theres no password confirmation provided', () => {
         const { sut } = makeSignUpController();
-        const password = faker.internet.password(32);
+        const httpRequest = makeHttpRequestObject({});
 
-        const httpRequest = {
-            body: {
-                name: faker.name.firstName(),
-                email: faker.internet.email(),
-                password,
-            },
-        };
-
+        httpRequest.body.passwordConfirmation = '';
         const response = sut.handle(httpRequest);
 
         expect(response.statusCode).toBe(400);
@@ -92,17 +78,9 @@ describe('SignUp controller', () => {
 
     it('Should return 400 if password confirmation fails', () => {
         const { sut } = makeSignUpController();
-        const password = faker.internet.password(32);
+        const httpRequest = makeHttpRequestObject({});
 
-        const httpRequest = {
-            body: {
-                name: faker.name.firstName(),
-                email: faker.internet.email(),
-                password,
-                passwordConfirmation: 'any-pass',
-            },
-        };
-
+        httpRequest.body.passwordConfirmation = 'any-pass';
         const response = sut.handle(httpRequest);
 
         expect(response.statusCode).toBe(400);
@@ -111,16 +89,7 @@ describe('SignUp controller', () => {
 
     it('Should return 400 if an invalid email is provided', () => {
         const { sut, emailValidatorStub } = makeSignUpController();
-        const password = faker.internet.password(32);
-
-        const httpRequest = {
-            body: {
-                name: faker.name.firstName(),
-                email: 'invalid-email',
-                password,
-                passwordConfirmation: password,
-            },
-        };
+        const httpRequest = makeHttpRequestObject({ email: 'invalid-email' });
 
         jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false);
 
@@ -132,36 +101,17 @@ describe('SignUp controller', () => {
 
     it('Should call email validator with correct email', () => {
         const { sut, emailValidatorStub } = makeSignUpController();
-        const password = faker.internet.password(32);
-        const email = faker.internet.email();
-
-        const httpRequest = {
-            body: {
-                name: faker.name.firstName(),
-                email,
-                password,
-                passwordConfirmation: password,
-            },
-        };
+        const httpRequest = makeHttpRequestObject({});
 
         const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid');
         sut.handle(httpRequest);
 
-        expect(isValidSpy).toBeCalledWith(email);
+        expect(isValidSpy).toBeCalledWith(httpRequest.body.email);
     });
 
     it('Should return 500 if emailValidator throws', () => {
         const { sut, emailValidatorStub } = makeSignUpController();
-        const password = faker.internet.password(32);
-
-        const httpRequest = {
-            body: {
-                name: faker.name.firstName(),
-                email: 'any-email',
-                password,
-                passwordConfirmation: password,
-            },
-        };
+        const httpRequest = makeHttpRequestObject({});
 
         jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
             throw new Error();
