@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker';
 
+import { AccountModel, AddAccountModel } from '@/domain/models';
+
 import { MissingParamError, InvalidParamError, InternalServerError } from '@/presentation/errors';
 import { SignUpController } from './signup-controller';
-import { AddAccountParams, EmailValidator, HttpRequest } from '../protocols';
-import { AccountModel } from '../models';
+import { EmailValidator, HttpRequest } from '../protocols';
 
 const makeSignUpController = () => {
     class EmailValidatorStub implements EmailValidator {
@@ -13,7 +14,7 @@ const makeSignUpController = () => {
     }
 
     class AddAccountStub {
-        add(params: AddAccountParams): AccountModel {
+        add(params: AddAccountModel): AccountModel {
             return {} as AccountModel;
         }
     }
@@ -30,7 +31,7 @@ const makeHttpRequestObject = ({
     name = faker.name.firstName(),
     email = faker.internet.email(),
     password = faker.internet.password(32),
-}): HttpRequest<AddAccountParams> => {
+}): HttpRequest<AddAccountModel> => {
     const passwordConfirmation = password;
 
     return {
