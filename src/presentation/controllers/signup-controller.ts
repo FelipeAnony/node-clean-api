@@ -1,4 +1,4 @@
-import { InvalidFieldError, InvalidParamError, MissingParamError } from '@/presentation/errors';
+import { InvalidParamError, MissingParamError } from '@/presentation/errors';
 import { Controller, EmailValidator, HttpRequest, HttpResponse } from '@/presentation/protocols';
 import { badRequest, internalServerError } from '@/presentation/helpers';
 
@@ -14,7 +14,7 @@ export class SignUpController implements Controller {
             }
 
             if (body.password !== body.passwordConfirmation) {
-                return badRequest(new InvalidFieldError('passwordConfirmation'));
+                return badRequest(new InvalidParamError('passwordConfirmation'));
             }
 
             const emailIsValid = this.emailValidator.isValid(body.email);
