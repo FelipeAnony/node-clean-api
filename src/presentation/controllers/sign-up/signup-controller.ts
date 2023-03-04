@@ -1,6 +1,8 @@
 import { AddAccount } from '@/domain/usecases';
 
-import { Controller, EmailValidator, HttpRequest, HttpResponse } from '@/presentation/protocols';
+import { EmailValidator } from '@/infra/protocols';
+
+import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols';
 import { badRequest, internalServerError } from '@/presentation/helpers';
 import { InvalidParamError, MissingParamError } from '@/presentation/errors';
 

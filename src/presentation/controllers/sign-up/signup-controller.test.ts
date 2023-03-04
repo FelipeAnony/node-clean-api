@@ -2,9 +2,11 @@ import { faker } from '@faker-js/faker';
 
 import { AccountModel, AddAccountModel } from '@/domain/models';
 
+import { EmailValidator } from '@/infra/protocols';
+
 import { MissingParamError, InvalidParamError, InternalServerError } from '@/presentation/errors';
 import { SignUpController } from './signup-controller';
-import { EmailValidator, HttpRequest } from '../protocols';
+import { HttpRequest } from '../../protocols';
 
 const makeSignUpController = () => {
     class EmailValidatorStub implements EmailValidator {
