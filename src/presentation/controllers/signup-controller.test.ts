@@ -2,7 +2,8 @@ import { faker } from '@faker-js/faker';
 
 import { MissingParamError, InvalidParamError, InternalServerError } from '@/presentation/errors';
 import { SignUpController } from './signup-controller';
-import { EmailValidator } from '../protocols';
+import { AddAccountParams, EmailValidator, HttpRequest } from '../protocols';
+import { AccountModel } from '../models';
 
 const makeSignUpController = () => {
     class EmailValidatorStub implements EmailValidator {
@@ -11,17 +12,25 @@ const makeSignUpController = () => {
         }
     }
 
-    const emailValidatorStub = new EmailValidatorStub();
-    const sut = new SignUpController(emailValidatorStub);
+    class AddAccountStub {
+        add(params: AddAccountParams): AccountModel {
+            return {} as AccountModel;
+        }
+    }
 
-    return { sut, emailValidatorStub };
+    const emailValidatorStub = new EmailValidatorStub();
+    const addAccountStub = new AddAccountStub();
+
+    const sut = new SignUpController(emailValidatorStub, addAccountStub);
+
+    return { sut, emailValidatorStub, addAccountStub };
 };
 
 const makeHttpRequestObject = ({
     name = faker.name.firstName(),
     email = faker.internet.email(),
     password = faker.internet.password(32),
-}) => {
+}): HttpRequest<AddAccountParams> => {
     const passwordConfirmation = password;
 
     return {
@@ -69,7 +78,7 @@ describe('SignUp controller', () => {
         const { sut } = makeSignUpController();
         const httpRequest = makeHttpRequestObject({});
 
-        httpRequest.body.passwordConfirmation = '';
+        httpRequest.body!.passwordConfirmation = '';
         const response = sut.handle(httpRequest);
 
         expect(response.statusCode).toBe(400);
@@ -80,7 +89,7 @@ describe('SignUp controller', () => {
         const { sut } = makeSignUpController();
         const httpRequest = makeHttpRequestObject({});
 
-        httpRequest.body.passwordConfirmation = 'any-pass';
+        httpRequest.body!.passwordConfirmation = 'any-pass';
         const response = sut.handle(httpRequest);
 
         expect(response.statusCode).toBe(400);
@@ -106,7 +115,7 @@ describe('SignUp controller', () => {
         const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid');
         sut.handle(httpRequest);
 
-        expect(isValidSpy).toBeCalledWith(httpRequest.body.email);
+        expect(isValidSpy).toBeCalledWith(httpRequest.body!.email);
     });
 
     it('Should return 500 if emailValidator throws', () => {
@@ -121,5 +130,15 @@ describe('SignUp controller', () => {
 
         expect(response.statusCode).toBe(500);
         expect(response.body).toEqual(new InternalServerError());
+    });
+
+    it('Should calls AddAccount with correct values', () => {
+        const { sut, addAccountStub } = makeSignUpController();
+        const httpRequest = makeHttpRequestObject({});
+
+        const addSpy = jest.spyOn(addAccountStub, 'add');
+        sut.handle(httpRequest);
+
+        expect(addSpy).toBeCalledWith(httpRequest.body);
     });
 });
