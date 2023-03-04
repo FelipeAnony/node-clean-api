@@ -1,6 +1,11 @@
 import { faker } from '@faker-js/faker';
 
-import { MissingParamError, InvalidParamError, InternalServerError } from '@/presentation/errors';
+import {
+    MissingParamError,
+    InvalidParamError,
+    InternalServerError,
+    InvalidFieldError,
+} from '@/presentation/errors';
 import { SignUpController } from './signup-controller';
 import { EmailValidator } from '../protocols';
 
@@ -88,6 +93,25 @@ describe('SignUp controller', () => {
 
         expect(response.statusCode).toBe(400);
         expect(response.body).toEqual(new MissingParamError('passwordConfirmation'));
+    });
+
+    it('Should return 400 if password confirmation fails', () => {
+        const { sut } = makeSignUpController();
+        const password = faker.internet.password(32);
+
+        const httpRequest = {
+            body: {
+                name: faker.name.firstName(),
+                email: faker.internet.email(),
+                password,
+                passwordConfirmation: 'any-pass',
+            },
+        };
+
+        const response = sut.handle(httpRequest);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toEqual(new InvalidFieldError('passwordConfirmation'));
     });
 
     it('Should return 400 if an invalid email is provided', () => {
