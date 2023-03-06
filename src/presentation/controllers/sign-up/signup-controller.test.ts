@@ -16,7 +16,7 @@ const makeSignUpController = () => {
     }
 
     class AddAccountStub {
-        add({ email, name }: AddAccountModel): AccountModel {
+        async add({ email, name }: AddAccountModel): Promise<AccountModel> {
             return {
                 email,
                 name,
@@ -133,7 +133,10 @@ describe('SignUp controller', () => {
             throw new Error();
         });
 
-        expect(sut.handle(httpRequest)).rejects.toThrow(new InternalServerError());
+        const response = await sut.handle(httpRequest);
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toEqual(new InternalServerError());
     });
 
     it('Should calls AddAccount with correct values', async () => {
@@ -151,10 +154,12 @@ describe('SignUp controller', () => {
         const httpRequest = makeHttpRequestObject({});
 
         jest.spyOn(addAccountStub, 'add').mockImplementationOnce(() => {
-            throw new Error();
+            return Promise.reject(new Error());
         });
 
-        expect(sut.handle(httpRequest)).rejects.toThrow(new InternalServerError());
+        const response = await sut.handle(httpRequest);
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toEqual(new InternalServerError());
     });
 
     it('Should return the account created on addAccount success case with correct data', async () => {
