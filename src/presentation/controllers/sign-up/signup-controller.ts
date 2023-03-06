@@ -12,7 +12,7 @@ export class SignUpController implements Controller {
         private readonly addAccount: AddAccount
     ) {}
 
-    handle({ body }: HttpRequest): HttpResponse {
+    async handle({ body }: HttpRequest): Promise<HttpResponse> {
         try {
             const requiredParams = ['name', 'email', 'password', 'passwordConfirmation'];
 
@@ -29,7 +29,7 @@ export class SignUpController implements Controller {
             const emailIsValid = this.emailValidator.isValid(email);
             if (!emailIsValid) return badRequest(new InvalidParamError('email'));
 
-            const newAccount = this.addAccount.add(body);
+            const newAccount = await this.addAccount.add(body);
 
             return {
                 statusCode: 200,
