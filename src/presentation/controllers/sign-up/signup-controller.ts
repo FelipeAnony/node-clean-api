@@ -3,7 +3,7 @@ import { AddAccount } from '@/domain/usecases';
 import { EmailValidator } from '@/infra/protocols';
 
 import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols';
-import { badRequest, internalServerError } from '@/presentation/helpers';
+import { badRequest, internalServerError, OKResponse } from '@/presentation/helpers';
 import { InvalidParamError, MissingParamError } from '@/presentation/errors';
 
 export class SignUpController implements Controller {
@@ -31,10 +31,7 @@ export class SignUpController implements Controller {
 
             const newAccount = await this.addAccount.add(body);
 
-            return {
-                statusCode: 200,
-                body: newAccount,
-            };
+            return OKResponse(newAccount);
         } catch (error) {
             return internalServerError();
         }
