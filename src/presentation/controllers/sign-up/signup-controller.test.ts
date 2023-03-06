@@ -16,8 +16,12 @@ const makeSignUpController = () => {
     }
 
     class AddAccountStub {
-        add(params: AddAccountModel): AccountModel {
-            return {} as AccountModel;
+        add({ email, name }: AddAccountModel): AccountModel {
+            return {
+                email,
+                name,
+                id: 'any-id',
+            };
         }
     }
 
@@ -157,5 +161,18 @@ describe('SignUp controller', () => {
 
         expect(response.statusCode).toBe(500);
         expect(response.body).toEqual(new InternalServerError());
+    });
+
+    it('Should return the account created on addAccount success case with correct data', () => {
+        const { sut } = makeSignUpController();
+        const httpRequest = makeHttpRequestObject({});
+
+        const { email, name } = httpRequest.body!;
+        const response = sut.handle(httpRequest);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.email).toBe(email);
+        expect(response.body.name).toBe(name);
+        expect(response.body.id).not.toBeUndefined();
     });
 });
