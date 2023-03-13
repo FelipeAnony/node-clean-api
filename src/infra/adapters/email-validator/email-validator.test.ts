@@ -1,42 +1,50 @@
+import validator from 'validator';
+
 import { EmailValidator } from '@/infra/protocols';
+import { faker } from '@faker-js/faker';
+
+jest.mock('validator', () => ({
+    isEmail(): boolean {
+        return true;
+    },
+}));
 
 const makeSut = () => {
-    class ValidatorStub {
-        validate(email: string): boolean {
-            return true;
-        }
-    }
-
     class EmailValidatorAdapter implements EmailValidator {
-        constructor(private readonly validator: any) {}
-
         isValid(email: string): boolean {
-            return this.validator.validate(email);
+            return validator.isEmail(email);
         }
     }
 
-    const validatorStub = new ValidatorStub();
-    const sut = new EmailValidatorAdapter(validatorStub);
+    const sut = new EmailValidatorAdapter();
 
-    return { sut, validatorStub };
+    return { sut };
 };
 
 describe('EmailValidator Adapter', () => {
     it('Should return false if validator returns false', () => {
-        const { sut, validatorStub } = makeSut();
+        const { sut } = makeSut();
 
-        jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(false);
+        jest.spyOn(validator, 'isEmail').mockReturnValueOnce(false);
 
         const emailIsValid = sut.isValid('invalid-email');
         expect(emailIsValid).toBe(false);
     });
 
     it('Should return true if validator returns true', () => {
-        const { sut, validatorStub } = makeSut();
-
-        jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(true);
+        const { sut } = makeSut();
 
         const emailIsValid = sut.isValid('valid-email');
         expect(emailIsValid).toBe(true);
+    });
+
+    it('Should calls validator with correct email value', () => {
+        const { sut } = makeSut();
+        const email = faker.internet.email();
+
+        const isValidSpy = jest.spyOn(validator, 'isEmail');
+
+        sut.isValid(email);
+        expect(isValidSpy).toBeCalledWith(email);
     });
 });
