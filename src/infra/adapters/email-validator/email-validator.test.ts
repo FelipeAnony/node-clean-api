@@ -1,7 +1,7 @@
 import validator from 'validator';
-
-import { EmailValidator } from '@/infra/protocols';
 import { faker } from '@faker-js/faker';
+
+import { EmailValidatorAdapter } from './email-validator-adapter';
 
 jest.mock('validator', () => ({
     isEmail(): boolean {
@@ -10,14 +10,7 @@ jest.mock('validator', () => ({
 }));
 
 const makeSut = () => {
-    class EmailValidatorAdapter implements EmailValidator {
-        isValid(email: string): boolean {
-            return validator.isEmail(email);
-        }
-    }
-
     const sut = new EmailValidatorAdapter();
-
     return { sut };
 };
 
