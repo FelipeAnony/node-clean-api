@@ -1,23 +1,15 @@
-import { AddAccountModel, AccountModel } from '@/domain/models';
-import { AddAccount } from '@/domain/usecases';
+import { faker } from '@faker-js/faker';
+
+import { AddAccountModel } from '@/domain/models';
+
+import { DbAddAccount } from './db-add-account';
 
 import { EncrypterAdapter } from '@/infra/protocols';
-import { faker } from '@faker-js/faker';
 
 const makeSut = () => {
     class EncrypterAdapterStub implements EncrypterAdapter {
         encrypt(value: string): string {
             return 'value-encrypted';
-        }
-    }
-
-    class DbAddAccount implements AddAccount {
-        constructor(private readonly encrypter: EncrypterAdapter) {}
-
-        add(params: AddAccountModel): Promise<AccountModel> {
-            const encryptedPassword = this.encrypter.encrypt(params.password);
-
-            return Promise.resolve({ email: 'valid-email', id: 'valid-id', name: 'valid-name' });
         }
     }
 
