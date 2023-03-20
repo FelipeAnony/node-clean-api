@@ -29,11 +29,11 @@ const defaultAddAccountParams: AddAccountModel = {
 };
 
 describe('DbAddAccount Usecase', () => {
-    it('Should call encrypter adapter with correct password', () => {
+    it('Should call encrypter adapter with correct password', async () => {
         const { sut, encrypter } = makeSut();
 
         const encrypterSpy = jest.spyOn(encrypter, 'encrypt');
-        sut.add(defaultAddAccountParams);
+        await sut.add(defaultAddAccountParams);
 
         expect(encrypterSpy).toBeCalledWith(password);
     });
