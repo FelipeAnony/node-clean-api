@@ -8,8 +8,8 @@ import { EncrypterAdapter } from '@/infra/protocols';
 
 const makeSut = () => {
     class EncrypterAdapterStub implements EncrypterAdapter {
-        encrypt(value: string): string {
-            return 'value-encrypted';
+        encrypt(value: string): Promise<string> {
+            return Promise.resolve('value-encrypted');
         }
     }
 
@@ -36,5 +36,14 @@ describe('DbAddAccount Usecase', () => {
         await sut.add(defaultAddAccountParams);
 
         expect(encrypterSpy).toBeCalledWith(password);
+    });
+
+    it('Should throws if encrypter throws', async () => {
+        const { sut, encrypter } = makeSut();
+
+        jest.spyOn(encrypter, 'encrypt').mockImplementationOnce(() => Promise.reject(new Error()));
+        const response = sut.add(defaultAddAccountParams);
+
+        await expect(response).rejects.toThrow();
     });
 });
