@@ -9,7 +9,13 @@ export default {
     coverageDirectory: 'coverage',
     coverageProvider: 'v8',
     roots: ['<rootDir>/src'],
-    collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!**/*.d.ts'],
+    collectCoverageFrom: [
+        '<rootDir>/src/**/*.ts',
+        '!**/*.d.ts',
+        '!**/index.ts',
+        '!<rootDir>/src/domain/**/*.ts',
+        '!**/*.protocol.ts',
+    ],
     transform: {
         '.+\\.ts$': 'ts-jest',
     },

@@ -1,2 +1,2 @@
-export * from './email-validator';
-export * from './encrypter-adapter-protocol';
+export * from './email-validator.protocol';
+export * from './encrypter-adapter.protocol';
