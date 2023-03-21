@@ -1,10 +1,11 @@
 import { faker } from '@faker-js/faker';
 
-import { AddAccountModel } from '@/domain/models';
+import { AccountModel, AddAccountModel } from '@/domain/models';
 
 import { DbAddAccount } from './db-add-account';
 
 import { EncrypterAdapter } from '@/infra/protocols';
+import { AddAccountRepository } from '@/data/protocols';
 
 const makeSut = () => {
     class EncrypterAdapterStub implements EncrypterAdapter {
@@ -13,10 +14,18 @@ const makeSut = () => {
         }
     }
 
-    const encrypter = new EncrypterAdapterStub();
-    const sut = new DbAddAccount(encrypter);
+    class AddAccountRepositoryStub implements AddAccountRepository {
+        add(data: AddAccountModel): Promise<AccountModel> {
+            return Promise.resolve({} as any);
+        }
+    }
 
-    return { sut, encrypter };
+    const encrypter = new EncrypterAdapterStub();
+    const addAccountRepositoryStub = new AddAccountRepositoryStub();
+
+    const sut = new DbAddAccount(encrypter, addAccountRepositoryStub);
+
+    return { sut, encrypter, addAccountRepositoryStub };
 };
 
 const password = faker.internet.password();
@@ -45,5 +54,14 @@ describe('DbAddAccount Usecase', () => {
         const response = sut.add(defaultAddAccountParams);
 
         await expect(response).rejects.toThrow();
+    });
+
+    it('Should call AddAccountRepository with correct values', async () => {
+        const { sut, addAccountRepositoryStub } = makeSut();
+
+        const addSpy = jest.spyOn(addAccountRepositoryStub, 'add');
+        await sut.add(defaultAddAccountParams);
+
+        expect(addSpy).toBeCalledWith({ ...defaultAddAccountParams, password: 'value-encrypted' });
     });
 });
