@@ -64,4 +64,15 @@ describe('DbAddAccount Usecase', () => {
 
         expect(addSpy).toBeCalledWith({ ...defaultAddAccountParams, password: 'value-encrypted' });
     });
+
+    it('Should throws if AddAccountRepository throws', async () => {
+        const { sut, addAccountRepositoryStub } = makeSut();
+
+        jest.spyOn(addAccountRepositoryStub, 'add').mockImplementationOnce(() =>
+            Promise.reject(new Error())
+        );
+        const response = sut.add(defaultAddAccountParams);
+
+        await expect(response).rejects.toThrow();
+    });
 });
