@@ -1,32 +1,16 @@
 import { faker } from '@faker-js/faker';
 
-import { AccountModel, AddAccountModel } from '@/domain/models';
-
-import { EmailValidator } from '@/infra/protocols';
+import { AddAccountModel } from '@/domain/models';
 
 import { MissingParamError, InvalidParamError, InternalServerError } from '@/presentation/errors';
 import { SignUpController } from './signup-controller';
 import { HttpRequest } from '../../protocols';
 
+import { makeAddAccountStub, makeEmailValidatorStub } from '@/presentation/mocks';
+
 const makeSignUpController = () => {
-    class EmailValidatorStub implements EmailValidator {
-        isValid(email: string): boolean {
-            return true;
-        }
-    }
-
-    class AddAccountStub {
-        async add({ email, name }: AddAccountModel): Promise<AccountModel> {
-            return {
-                email,
-                name,
-                id: 'any-id',
-            };
-        }
-    }
-
-    const emailValidatorStub = new EmailValidatorStub();
-    const addAccountStub = new AddAccountStub();
+    const emailValidatorStub = makeEmailValidatorStub();
+    const addAccountStub = makeAddAccountStub();
 
     const sut = new SignUpController(emailValidatorStub, addAccountStub);
 
