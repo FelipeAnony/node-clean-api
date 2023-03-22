@@ -1,27 +1,14 @@
 import { faker } from '@faker-js/faker';
 
-import { AccountModel, AddAccountModel } from '@/domain/models';
+import { AddAccountModel } from '@/domain/models';
 
 import { DbAddAccount } from './db-add-account';
 
-import { EncrypterAdapter } from '@/infra/protocols';
-import { AddAccountRepository } from '@/data/protocols';
+import { makeEncrypterAdapterStub, makeAddAccountRepositoryStub } from '@/data/mocks';
 
 const makeSut = () => {
-    class EncrypterAdapterStub implements EncrypterAdapter {
-        encrypt(value: string): Promise<string> {
-            return Promise.resolve('value-encrypted');
-        }
-    }
-
-    class AddAccountRepositoryStub implements AddAccountRepository {
-        add(data: AddAccountModel): Promise<AccountModel> {
-            return Promise.resolve({} as any);
-        }
-    }
-
-    const encrypter = new EncrypterAdapterStub();
-    const addAccountRepositoryStub = new AddAccountRepositoryStub();
+    const encrypter = makeEncrypterAdapterStub();
+    const addAccountRepositoryStub = makeAddAccountRepositoryStub();
 
     const sut = new DbAddAccount(encrypter, addAccountRepositoryStub);
 
