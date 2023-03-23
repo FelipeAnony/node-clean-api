@@ -1,6 +1,6 @@
 import validator from 'validator';
 
-import { EmailValidator } from '@/infra/protocols';
+import { EmailValidator } from '@/presentation/protocols';
 
 export class EmailValidatorAdapter implements EmailValidator {
     isValid(email: string): boolean {
