@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-import { AddAccountModel } from '@/domain/models';
+import { AccountModel, AddAccountModel } from '@/domain/models';
 
 import { DbAddAccount } from './db-add-account';
 
@@ -61,5 +61,14 @@ describe('DbAddAccount Usecase', () => {
         const response = sut.add(defaultAddAccountParams);
 
         await expect(response).rejects.toThrow();
+    });
+
+    it('Should return an account on AddAccountRepository success case', async () => {
+        const { sut } = makeSut();
+
+        const response = await sut.add(defaultAddAccountParams);
+        const { email, name } = defaultAddAccountParams;
+
+        expect(response).toEqual({ email, id: 'any-id', name } as AccountModel);
     });
 });

@@ -3,8 +3,8 @@ import { AccountModel, AddAccountModel } from '@/domain/models';
 import { AddAccountRepository } from '../protocols';
 
 class AddAccountRepositoryStub implements AddAccountRepository {
-    add(data: AddAccountModel): Promise<AccountModel> {
-        return Promise.resolve({} as any);
+    add({ email, name }: AddAccountModel): Promise<AccountModel> {
+        return Promise.resolve({ email, name, id: 'any-id' });
     }
 }
 
