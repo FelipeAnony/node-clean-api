@@ -2,6 +2,12 @@ import bcrypt from 'bcrypt';
 
 import { EncrypterAdapter } from '@/data/protocols';
 
+jest.mock('bcrypt', () => ({
+    async hash() {
+        return Promise.resolve('hashed-value');
+    },
+}));
+
 const makeSut = (salt = 12) => {
     class BcryptAdapter implements EncrypterAdapter {
         constructor(private salt = 12) {}
@@ -28,5 +34,12 @@ describe('Bcrypt Adapter', () => {
         await sut.encrypt(valueToTest);
 
         expect(bcryptSpy).toBeCalledWith(valueToTest, salt);
+    });
+
+    it('Should return a hash on success case', async () => {
+        const { sut } = makeSut();
+        const result = await sut.encrypt('any-value');
+
+        expect(result).toBe('hashed-value');
     });
 });
