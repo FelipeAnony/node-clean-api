@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
-
-import { EncrypterAdapter } from '@/data/protocols';
+import { BcryptAdapter } from './bcrypt-adapter';
 
 jest.mock('bcrypt', () => ({
     async hash() {
@@ -9,14 +8,6 @@ jest.mock('bcrypt', () => ({
 }));
 
 const makeSut = (salt = 12) => {
-    class BcryptAdapter implements EncrypterAdapter {
-        constructor(private salt = 12) {}
-
-        async encrypt(value: string): Promise<string> {
-            return await bcrypt.hash(value, this.salt);
-        }
-    }
-
     const sut = new BcryptAdapter(salt);
 
     return {
